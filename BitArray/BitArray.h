@@ -10,22 +10,26 @@ struct _BitArray{
 
 typedef struct _BitArray * BitArray;
 
+/* Creator                                                                    */
 /* Creates a BitArray object by mallocing memory. Return value is given:      *
  * NULL    - indicates either size is less than 1                             *
  *           or that there was not room in the heap                           *
  * NonNULL - indicates that the pointer to the bit array was returned         */
 BitArray newBitArray(int size);
 
+/* Destructor                                                                 */
 /* Deletes a BitArray object by calling free. Return value is given:          *
  * -1 - indicates that bit_array was NULL and thus nothing was done           *
  *  0 - indicates success and the memory was freed                            */
-int deleteBitArray(BitArray bit_array);
+int deleteBitArray(BitArray * bit_array);
 
+/* Displayer                                                                  */
 /* Prints the contents of the bit array in 1s and 0s return value is given:   *
  * -1 - indcates failure a result of a NULL bit_array                         *
  *  0 - indicates success                                                     */
 int printBitArray(const BitArray bit_array);
 
+/* Setters                                                                    */
 /* Sets the value of the bit located at position indicated by elem to 1.      *
  * Return value is given:                                                     *
  * -1 - indicates that the bit_array was NULL                                 *
@@ -42,6 +46,14 @@ int setElemBitArray(BitArray bit_array, const int elem);
  *  0 - indicates success                                                     */
 int unsetElemBitArray(BitArray bit_array, const int elem);
 
+/* Getters                                                                    */
+/* Determines the size of the BitArray in terms of the number of bits, the    *
+ * number of bits is passed back through the return value. The return value is*
+ * given by:                                                                  *
+ * -1  - if there is an error i.e. the bit_array is NULL                      *
+ * >-1 - if success a value greater than -1 to indicate the size of the array */
+int getSizeBitArray(const BitArray bit_array);
+
 /* Finds the value of the bit located at position indicated by elem           *
  * Return value is given:                                                     *
  * -1 - indicates that the bit_array was NULL                                 *
@@ -53,6 +65,7 @@ int unsetElemBitArray(BitArray bit_array, const int elem);
  *  0 - indicates success and that the bit is set to 0                        */
 int getElemBitArray(const BitArray bit_array, const int elem);
 
+/* Testers                                                                    */
 /* Designed to test the internal functions of the library that the user does  *
  * not have access to. Will return:                                           *
  *  0 - if success                                                            *

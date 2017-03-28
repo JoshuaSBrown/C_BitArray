@@ -198,16 +198,22 @@ BitArray newBitArray(int size){
 }
 
 /* Destructor                                                                 */
-int deleteBitArray(BitArray bit_array){
+int deleteBitArray(BitArray * bit_array){
   if(bit_array==NULL){
-    fprintf(stderr,"ERROR BitArray passed to deleteBitArray is NULL "
+    fprintf(stderr,"ERROR *bit_array passed to deleteBitArray is NULL "
                    "cannot free\n");
     return -1;
   }
-  if(bit_array->array!=NULL){
-    free(bit_array->array);
+  if(*bit_array==NULL){
+    fprintf(stderr,"ERROR *bit_array passed to deleteBitArray is NULL "
+                   "cannot free\n");
+    return -1;
   }
-  free(bit_array);
+  if((*bit_array)->array!=NULL){
+    free((*bit_array)->array);
+  }
+  free((*bit_array));
+  *bit_array = NULL;
   return 0;
 }
 
@@ -230,6 +236,7 @@ int printBitArray(const BitArray bit_array){
     printf("%d",getElem(bit_array,i));
     i++;
   }
+  printf("\n");
   return 0;
 }
 
@@ -265,14 +272,23 @@ int unsetElemBitArray(BitArray bit_array, const int elem_bit){
 }
 
 /* Getters                                                                    */
+int getSizeBitArray(const BitArray bit_array){
+  if(bit_array==NULL){
+    fprintf(stderr,"ERROR bit_array is NULL cannot getSizeBitArray\n");
+    return -1;
+  }
+  return bit_array->size;
+}
+
 int getElemBitArray(const BitArray bit_array, const int elem_bit){
   if(bit_array==NULL){
-    printf("ERROR bit_array is NULL cannot getElemBitArray\n");
+    fprintf(stderr,"ERROR bit_array is NULL cannot getElemBitArray\n");
     return -1;
   }
   if(elem_bit>=bit_array->size || elem_bit<0){
-    printf("ERROR cannot access elem %d out side of the scope of the bit_array"
-           " bit_array is of size %d\n",elem_bit,bit_array->size);
+    fprintf(stderr,"ERROR cannot access elem %d out side of the scope of the "
+                   "bit_array, bit_array is of size %d\n",
+                   elem_bit,bit_array->size);
     return -1;
   }
   return getElem(bit_array, elem_bit);
@@ -338,7 +354,7 @@ int test_BitArrayInternal(void){
   for(int i=0;i<16;i++) unsetElem(bit_array,i);
   for(int i=0;i<16;i++) assert(getElem(bit_array,i)==0);
 
-  deleteBitArray(bit_array);
+  deleteBitArray(&bit_array);
 
   return 0;
 }
