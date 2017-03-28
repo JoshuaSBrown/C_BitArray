@@ -70,6 +70,9 @@ int main(void){
     rv = getElemBitArray(BitA,i);
     assert(rv==0);
   }
+  rv = deleteBitArray(&BitA);
+  assert(rv==0);
+  assert(BitA==NULL);
 
   return 0;
 }
