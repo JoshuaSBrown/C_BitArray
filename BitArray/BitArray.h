@@ -1,3 +1,14 @@
+/******************************************************************************
+ * Created: 27 March 2017                                                     *
+ * Author:  Joshua S Brown                                                    *
+ *                                                                            *
+ * Purpose: This library was designed to enable easy manipulation of an array *
+ *          of bits.                                                          *
+ *                                                                            *
+ * Conventions:                                                               *
+ *  size -            Used to refer to the total size of the array in bits.   *
+ *  elem -            Used to refer to an element in the bit array.           *
+ ******************************************************************************/
 #ifndef _BITARRAY_H_
 #define _BITARRAY_H_
 
