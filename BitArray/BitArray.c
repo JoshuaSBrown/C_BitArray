@@ -40,23 +40,23 @@
  * Internal Library Functions                                                 *
  ******************************************************************************/
 // For a given number of bits determine the index of the byte in the array
-static inline int getElemByte(const int bits){
+static inline int _getElemByte(const int bits){
   return bits/BITS_BYTE;
 }
 
 // For a given number of bits determine the number of bytes that are needed
-static inline int getBytes(const int bits){
-  return getElemByte(bits)+1;
+static inline int _getBytes(const int bits){
+  return _getElemByte(bits)+1;
 }
 
 // For a given bit determine the index of the bit within the closest byte.
-static inline int getBitInd(const int bits){
+static inline int _getBitInd(const int bits){
   return bits%BITS_BYTE;
 }
 
 // Given a byte and the index within the byte determine the value of the bit it
 // should be either a 1 or a 0, index must be between 0 and 7 inclusive.
-static inline unsigned int getBit(byte byt, const int index){
+static inline unsigned int _getBit(byte byt, const int index){
 
   switch(index){
     case 0:
@@ -80,17 +80,17 @@ static inline unsigned int getBit(byte byt, const int index){
   }
 }
 
-inline static int getElem(const BitArray bit_array,const int elem_bit){
+inline static int _getElem(const BitArray bit_array,const int elem_bit){
   /* Determine which byte in the array corresponds to elem_bit                */
-  int elem_byte = getElemByte(elem_bit);
+  int elem_byte = _getElemByte(elem_bit);
   // We also need to know which bit, thus we will also calculate the modulus
-  int index = getBitInd(elem_bit);
-  return getBit(bit_array->array[elem_byte],index);
+  int index = _getBitInd(elem_bit);
+  return _getBit(bit_array->array[elem_byte],index);
 }
 
 // Given a byte and the index within the byte set the bit to a value of 1
 // index must be between 0 and 7 inclusive.
-static inline void setBit(byte * byt, const int index){
+static inline void _setBit(byte * byt, const int index){
   switch(index){
     case 0:
       *byt = *byt | 1;
@@ -119,16 +119,17 @@ static inline void setBit(byte * byt, const int index){
   }
 }
 
-inline static void setElem(BitArray bit_array, const int elem_bit){
+inline static void _setElem(BitArray bit_array, const int elem_bit){
   /* Determine which byte in the array corresponds to elem_bit                */
-  int elem_byte = getElemByte(elem_bit);
+  int elem_byte = _getElemByte(elem_bit);
   // We also need to know which bit, thus we will also calculate the modulus
-  int index = getBitInd(elem_bit);
-  setBit(&(bit_array->array[elem_byte]),index);
+  int index = _getBitInd(elem_bit);
+  _setBit(&(bit_array->array[elem_byte]),index);
 }
+
 // Given a byte and the index within the byte set the bit to a value of 0
 // index must be between 0 and 7 inclusive.
-static inline void unsetBit(byte * byt, const int index){
+static inline void _unsetBit(byte * byt, const int index){
   switch(index){
     case 0:
       *byt = *byt ^ 1;
@@ -157,12 +158,12 @@ static inline void unsetBit(byte * byt, const int index){
   }
 }
 
-inline static void unsetElem(BitArray bit_array, const int elem_bit){
+inline static void _unsetElem(BitArray bit_array, const int elem_bit){
   /* Determine which byte in the array corresponds to elem_bit                */
-  int elem_byte = getElemByte(elem_bit);
+  int elem_byte = _getElemByte(elem_bit);
   // We also need to know which bit, thus we will also calculate the modulus
-  int index = getBitInd(elem_bit);
-  unsetBit(&(bit_array->array[elem_byte]),index);
+  int index = _getBitInd(elem_bit);
+  _unsetBit(&(bit_array->array[elem_byte]),index);
 }
 
 /******************************************************************************
@@ -172,7 +173,7 @@ inline static void unsetElem(BitArray bit_array, const int elem_bit){
 BitArray newBitArray(int size){
   if(size<1) {printf("ERROR BitArray must be larger than 0\n"); return NULL;}
   // Determine how many bytes are in the array
-  int num_bytes = getBytes(size);
+  int num_bytes = _getBytes(size);
   // Malloc memory for bit array size and array pointer
   BitArray bit_array = (BitArray) malloc(sizeof(struct _BitArray));
   // If malloc return NULL then there is not enough space in the heap
@@ -181,7 +182,7 @@ BitArray newBitArray(int size){
     return NULL;
   }
   // Malloc memory for bit array pointer
-  bit_array->array = (byte *) malloc(BITS_BYTE*num_bytes);
+  bit_array->array = (byte *) malloc(num_bytes);
   // If malloc returned NULL then there is not enough space in the heap
   if(bit_array->array==NULL){
     fprintf(stderr,"ERROR byte array in bit_array returned NULL when "
@@ -224,7 +225,7 @@ int printBitArray(const BitArray bit_array){
       return -1;
   }
   printf("Array size:     %5d\n",bit_array->size);
-  printf("Required bytes: %5d\n",getBytes(bit_array->size));
+  printf("Required bytes: %5d\n",_getBytes(bit_array->size));
 
   printf("Bits\n");
   int BitsPerRow = 80;
@@ -233,7 +234,7 @@ int printBitArray(const BitArray bit_array){
     if(i%BitsPerRow==0){
       printf("\n");
     }
-    printf("%d",getElem(bit_array,i));
+    printf("%d",_getElem(bit_array,i));
     i++;
   }
   printf("\n");
@@ -252,7 +253,7 @@ int setElemBitArray(BitArray bit_array, const int elem_bit){
                    bit_array->size);
     return -1;
   }
-  setElem(bit_array, elem_bit);
+  _setElem(bit_array, elem_bit);
   return 0;
 }
 
@@ -267,7 +268,7 @@ int unsetElemBitArray(BitArray bit_array, const int elem_bit){
     return -1;
   }
 
-  unsetElem(bit_array, elem_bit);
+  _unsetElem(bit_array, elem_bit);
   return 0;
 }
 
@@ -291,7 +292,7 @@ int getElemBitArray(const BitArray bit_array, const int elem_bit){
                    elem_bit,bit_array->size);
     return -1;
   }
-  return getElem(bit_array, elem_bit);
+  return _getElem(bit_array, elem_bit);
 }
 
 /* Testers                                                                    */
@@ -305,54 +306,54 @@ int test_BitArrayInternal(void){
     return -1;
   }
 
-  printf("Testing: getElemByte\n");
-  assert(getElemByte(0)==0);
-  assert(getElemByte(7)==0);
-  assert(getElemByte(8)==1);
-  assert(getElemByte(16)==2);
+  printf("Testing: _getElemByte\n");
+  assert(_getElemByte(0)==0);
+  assert(_getElemByte(7)==0);
+  assert(_getElemByte(8)==1);
+  assert(_getElemByte(16)==2);
 
-  printf("Testing: getBytes\n");
-  assert(getBytes(0)==1);
-  assert(getBytes(7)==1);
-  assert(getBytes(8)==2);
-  assert(getBytes(16)==3);
+  printf("Testing: _getBytes\n");
+  assert(_getBytes(0)==1);
+  assert(_getBytes(7)==1);
+  assert(_getBytes(8)==2);
+  assert(_getBytes(16)==3);
 
-  printf("Testing: getBitInd\n");
-  assert(getBitInd(0)==0);
-  assert(getBitInd(1)==1);
-  assert(getBitInd(7)==7);
-  assert(getBitInd(8)==0);
-  assert(getBitInd(9)==1);
-  assert(getBitInd(15)==7);
-  assert(getBitInd(16)==0);
+  printf("Testing: _getBitInd\n");
+  assert(_getBitInd(0)==0);
+  assert(_getBitInd(1)==1);
+  assert(_getBitInd(7)==7);
+  assert(_getBitInd(8)==0);
+  assert(_getBitInd(9)==1);
+  assert(_getBitInd(15)==7);
+  assert(_getBitInd(16)==0);
 
-  printf("Testing: getBit\n");
+  printf("Testing: _getBit\n");
   byte byt = 0;
-  for(int i=0;i<8;i++) assert(getBit(byt,0)==0);
+  for(int i=0;i<8;i++) assert(_getBit(byt,0)==0);
 
   byt = 255;
-  for(int i=0;i<8;i++) assert(getBit(byt,i)==1);
+  for(int i=0;i<8;i++) assert(_getBit(byt,i)==1);
 
-  printf("Testing: getElem\n");
+  printf("Testing: _getElem\n");
   BitArray bit_array = newBitArray(16);
   assert(bit_array!=NULL);
-  for(int i=0;i<16;i++) assert(getElem(bit_array,i)==0);
+  for(int i=0;i<16;i++) assert(_getElem(bit_array,i)==0);
 
-  printf("Testing: setBit\n");
-  for(int i=0;i<8;i++) setBit(&byt,i);
-  for(int i=0;i<8;i++) assert(getBit(byt,i)==1);
+  printf("Testing: _setBit\n");
+  for(int i=0;i<8;i++) _setBit(&byt,i);
+  for(int i=0;i<8;i++) assert(_getBit(byt,i)==1);
 
-  printf("Testing: setElem\n");
-  for(int i=0;i<16;i++) setElem(bit_array,i);
-  for(int i=0;i<16;i++) assert(getElem(bit_array,i)==1);
+  printf("Testing: _setElem\n");
+  for(int i=0;i<16;i++) _setElem(bit_array,i);
+  for(int i=0;i<16;i++) assert(_getElem(bit_array,i)==1);
 
-  printf("Testing: unsetBit\n");
-  for(int i=0;i<8;i++) unsetBit(&byt,i);
-  for(int i=0;i<8;i++) assert(getBit(byt,i)==0);
+  printf("Testing: _unsetBit\n");
+  for(int i=0;i<8;i++) _unsetBit(&byt,i);
+  for(int i=0;i<8;i++) assert(_getBit(byt,i)==0);
 
-  printf("Testing: unsetElem\n");
-  for(int i=0;i<16;i++) unsetElem(bit_array,i);
-  for(int i=0;i<16;i++) assert(getElem(bit_array,i)==0);
+  printf("Testing: _unsetElem\n");
+  for(int i=0;i<16;i++) _unsetElem(bit_array,i);
+  for(int i=0;i<16;i++) assert(_getElem(bit_array,i)==0);
 
   deleteBitArray(&bit_array);
 
